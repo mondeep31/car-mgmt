@@ -8,12 +8,12 @@ export const createCar = async (req: Request, res: Response) => {
     const { title, description, tags } = req.body;
     const images = (req.files as Express.Multer.File[])?.map(file => file.path) || [];
 
-    // No need to parse tags again since it's already handled in validation
+
     const car = await prisma.car.create({
       data: {
         title,
         description,
-        tags,  // tags is already an array from validation
+        tags,  
         images,
         userId: req.userId!
       }
@@ -89,36 +89,30 @@ export const getCar = async (req: Request, res: Response) => {
 
 export const updateCar = async (req: Request, res: Response): Promise<void> => {
     try {
-        // Log the incoming request for debugging
-        console.log('Update request:', {
-            params: req.params,
-            body: req.body,
-            files: req.files
-        });
-
+        
         const { title, description, tags } = req.body;
         const images = (req.files as Express.Multer.File[])?.map(file => file.path);
         
-        // Validate the ID
+
         const carId = req.params.id;
         if (!carId || typeof carId !== 'string') {
             res.status(400).json({ error: 'Invalid car ID' });
             return;
         }
 
-        // Handle tags properly
+
         let tagsArray: string[] = [];
         if (tags) {
             try {
-                // Check if tags is already an array
+
                 if (Array.isArray(tags)) {
                     tagsArray = tags;
                 } else if (typeof tags === 'string') {
-                    // Try parsing as JSON first
+
                     try {
                         tagsArray = JSON.parse(tags);
                     } catch {
-                        // If JSON parsing fails, split by comma
+
                         tagsArray = tags.split(',').map(tag => tag.trim());
                     }
                 }
@@ -129,7 +123,7 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
             }
         }
 
-        // Check if car exists and belongs to user
+
         const existingCar = await prisma.car.findFirst({
             where: {
                 id: carId,
@@ -142,7 +136,7 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        // Prepare update data
+
         const updateData: Prisma.CarUpdateInput = {
             ...(title && { title }),
             ...(description && { description }),
@@ -150,7 +144,7 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
             ...(images && images.length > 0 && { images })
         };
 
-        // Update the car
+
         const updatedCar = await prisma.car.update({
             where: { id: carId },
             data: updateData

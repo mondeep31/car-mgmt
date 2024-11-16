@@ -7,7 +7,7 @@ export const userSchema = z.object({
   name: z.string().min(2)
 });
 
-// MongoDB ObjectId validation
+
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 const objectIdSchema = z.string().regex(objectIdRegex, 'Invalid ObjectId format');
 
@@ -21,7 +21,7 @@ export const validateUser = (req: Request, res: Response, next: NextFunction): v
   }
 };
 
-// Helper function to parse tags
+
 const parseTagsString = (tagsInput: unknown): string[] => {
     if (Array.isArray(tagsInput)) {
       return tagsInput.map(String);
@@ -29,13 +29,13 @@ const parseTagsString = (tagsInput: unknown): string[] => {
     
     if (typeof tagsInput === 'string') {
       try {
-        // Try parsing as JSON first
+
         const parsed = JSON.parse(tagsInput);
         if (Array.isArray(parsed)) {
           return parsed.map(String);
         }
       } catch {
-        // If JSON parsing fails, split by comma
+
         return tagsInput.split(',').map(tag => tag.trim()).filter(Boolean);
       }
     }
@@ -54,7 +54,7 @@ const parseTagsString = (tagsInput: unknown): string[] => {
       .default([])
   });
   
-  // For updates, make all fields optional
+
   const carUpdateSchema = carSchema.partial();
   
   export const validateCar = (req: Request, res: Response, next: NextFunction) => {
@@ -62,7 +62,7 @@ const parseTagsString = (tagsInput: unknown): string[] => {
       const schema = req.method === 'PUT' ? carUpdateSchema : carSchema;
       const validatedData = schema.parse(req.body);
       
-      // Update request body with validated data
+
       req.body = validatedData;
       
       next();
