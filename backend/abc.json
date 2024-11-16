@@ -1,0 +1,189 @@
+{
+    "info": {
+      "name": "Car Management API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Auth",
+        "item": [
+          {
+            "name": "Signup",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:3000/auth/signup",
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\":\"test@example.com\",\"password\":\"123456\",\"name\":\"Test User\"}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "Login",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:3000/auth/login",
+              "body": {
+                "mode": "raw",
+                "raw": "{\"email\":\"test@example.com\",\"password\":\"123456\"}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "Cars",
+        "item": [
+          {
+            "name": "Create Car",
+            "request": {
+              "method": "POST",
+              "url": "http://localhost:3000/cars",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+        {
+          "key": "title",
+          "value": "Test Car",
+          "type": "text"
+        },
+        {
+          "key": "description",
+          "value": "Test Description",
+          "type": "text"
+        },
+        {
+          "key": "tags",
+          "value": "[\"sedan\",\"luxury\"]",
+          "type": "text"
+        },
+        {
+          "key": "images",
+          "type": "file",
+          "src": null
+        }
+      ]
+
+              }
+            }
+          },
+          {
+            "name": "Get All Cars",
+            "request": {
+              "method": "GET",
+              "url": "http://localhost:3000/cars",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "sedan",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          {
+            "name": "Get Car by ID",
+            "request": {
+              "method": "GET",
+              "url": "http://localhost:3000/cars/:id",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "your-car-id"
+                }
+              ]
+            }
+          },
+          {
+            "name": "Update Car",
+            "request": {
+              "method": "PUT",
+              "url": "http://localhost:3000/cars/:id",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "title",
+                    "value": "Updated Car"
+                  },
+                  {
+                    "key": "description",
+                    "value": "Updated Description"
+                  },
+                  {
+                    "key": "tags",
+                    "value": "[\"suv\",\"premium\"]"
+                  },
+                  {
+                    "key": "images",
+                    "type": "file"
+                  }
+                ]
+              },
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "your-car-id"
+                }
+              ]
+            }
+          },
+          {
+            "name": "Delete Car",
+            "request": {
+              "method": "DELETE",
+              "url": "http://localhost:3000/cars/:id",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "your-car-id"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+  
+  
