@@ -179,7 +179,9 @@ const deleteCar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         yield prisma.car.delete({
             where: { id: req.params.id }
         });
-        res.status(204).send();
+        res.status(204).send().json({
+            message: "Car deleted successfully"
+        });
     }
     catch (error) {
         console.error(error);
