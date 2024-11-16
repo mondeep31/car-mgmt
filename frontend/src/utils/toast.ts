@@ -1,5 +1,5 @@
-// utils/toast.ts
-import { useToast } from '@/components/ui/use-toast';
+
+import { useToast } from '@/hooks/use-toast';
 
 export const useCustomToast = () => {
   const { toast } = useToast();

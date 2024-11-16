@@ -1,14 +1,28 @@
-
-// pages/CarDetailPage.tsx
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { carService } from '@/services/api';
-import { Car } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselPrevious,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import { carService } from "@/services/api";
+import { Car } from "@/types";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const CarDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,12 +38,11 @@ export const CarDetailPage: React.FC = () => {
           setCar(data);
         }
       } catch (error) {
-        console.error('Failed to load car:', error);
+        console.error("Failed to load car: ", error);
       } finally {
         setLoading(false);
       }
     };
-
     loadCar();
   }, [id]);
 
@@ -37,19 +50,27 @@ export const CarDetailPage: React.FC = () => {
     try {
       if (id) {
         await carService.deleteCar(id);
-        navigate('/cars');
+        navigate("/cars");
       }
     } catch (error) {
-      console.error('Failed to delete car:', error);
+      console.error("Failed to delete car:", error);
     }
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
 
   if (!car) {
-    return <div className="flex justify-center items-center min-h-screen">Car not found</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Car not found
+      </div>
+    );
   }
 
   return (
@@ -73,8 +94,8 @@ export const CarDetailPage: React.FC = () => {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete this car
-                      and remove its data from our servers.
+                      This action cannot be undone. This will permanently delete
+                      this car and remove its data from our servers.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -136,3 +157,5 @@ export const CarDetailPage: React.FC = () => {
     </div>
   );
 };
+
+export default CarDetailPage;

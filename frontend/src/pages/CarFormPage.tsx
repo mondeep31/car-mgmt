@@ -1,12 +1,9 @@
-
-// pages/CarFormPage.tsx
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { carService } from '@/services/api';
-import { CarForm } from '@/components/CarForm';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useEffect, useState } from 'react';
-import { Car } from '@/types';
+import { CarForm } from "@/components/CarForm";
+import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
+import { carService } from "@/services/api";
+import { Car } from "@/types";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const CarFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +18,7 @@ export const CarFormPage: React.FC = () => {
           const data = await carService.getCarById(id);
           setCar(data);
         } catch (error) {
-          console.error('Failed to load car:', error);
+          console.error("Failed to load car:", error);
         } finally {
           setLoading(false);
         }
@@ -38,21 +35,25 @@ export const CarFormPage: React.FC = () => {
       } else {
         await carService.createCar(formData);
       }
-      navigate('/cars');
+      navigate("/cars");
     } catch (error) {
-      console.error('Failed to save car:', error);
+      console.error("Failed to save car:", error);
     }
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto py-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>{id ? 'Edit Car' : 'Add New Car'}</CardTitle>
+          <CardTitle>{id ? "Edit Car" : "Add New Car"}</CardTitle>
         </CardHeader>
         <CardContent>
           <CarForm onSubmit={handleSubmit} initialData={car ?? undefined} />
@@ -61,3 +62,5 @@ export const CarFormPage: React.FC = () => {
     </div>
   );
 };
+
+export default CarFormPage;

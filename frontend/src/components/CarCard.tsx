@@ -1,9 +1,16 @@
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Car } from '@/types';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Car } from "@/types";
+import { useNavigate } from "react-router-dom";
+import { UPLOADS_URL } from "@/config/constants";
 
 interface CarCardProps {
   car: Car;
@@ -12,6 +19,16 @@ interface CarCardProps {
 
 export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
   const navigate = useNavigate();
+
+  const getImageUrl = (imagePath: string) => {
+
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+
+    const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+    return `${UPLOADS_URL}/${cleanPath}`;
+  };
 
   return (
     <Card className="w-full">
@@ -39,9 +56,13 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
       <CardContent>
         <div className="aspect-video relative overflow-hidden rounded-lg mb-4">
           <img
-            src={car.images[0]}
+            // src={car.images[0]}
+            src={car.images[0] ? getImageUrl(car.images[0]) : '/placeholder-car.jpg'}
             alt={car.title}
             className="object-cover w-full h-full"
+            onError={(e) => {
+              e.currentTarget.src = '/placeholder-car.jpg';
+            }}
           />
         </div>
         <p className="text-sm text-gray-600 mb-4">{car.description}</p>

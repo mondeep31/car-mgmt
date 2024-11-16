@@ -1,8 +1,10 @@
-import axios from 'axios';
+import { LoginCredentials, SignupCredentials, Car, AuthResponse } from "@/types";
+import axios from "axios";
+
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
-});
+    baseURL: 'http://localhost:3000'
+})
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
@@ -27,22 +29,21 @@ export const authService = {
     localStorage.removeItem('token');
   },
 };
-
 export const carService = {
-  getAllCars: async (search?: string) => {
-    const params = search ? { search } : undefined;
-    return api.get<Car[]>('/cars', { params }).then((res) => res.data);
-  },
-  getCarById: async (id: string) => {
-    return api.get<Car>(`/cars/${id}`).then((res) => res.data);
-  },
-  createCar: async (formData: FormData) => {
-    return api.post<Car>('/cars', formData).then((res) => res.data);
-  },
-  updateCar: async (id: string, formData: FormData) => {
-    return api.put<Car>(`/cars/${id}`, formData).then((res) => res.data);
-  },
-  deleteCar: async (id: string) => {
-    return api.delete(`/cars/${id}`);
-  },
-};
+    getAllCars: async (search?: string) => {
+      const params = search ? { search } : undefined;
+      return api.get<Car[]>('/cars', { params }).then((res) => res.data);
+    },
+    getCarById: async (id: string) => {
+      return api.get<Car>(`/cars/${id}`).then((res) => res.data);
+    },
+    createCar: async (formData: FormData) => {
+      return api.post<Car>('/cars', formData).then((res) => res.data);
+    },
+    updateCar: async (id: string, formData: FormData) => {
+      return api.put<Car>(`/cars/${id}`, formData).then((res) => res.data);
+    },
+    deleteCar: async (id: string) => {
+      return api.delete(`/cars/${id}`);
+    },
+}

@@ -1,5 +1,8 @@
-// context/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
+
+import { authService } from "@/services/api";
+import { SignupCredentials, User } from "@/types";
+import { LoginCredentials } from "@/types/auth";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface AuthContextType {
   user: User | null;
@@ -11,15 +14,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check token and validate user session
-    const token = localStorage.getItem('token');
+
+    const token = localStorage.getItem("token");
     if (token) {
-      // Implement token validation logic here
+
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -51,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

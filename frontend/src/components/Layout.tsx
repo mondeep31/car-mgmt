@@ -1,16 +1,18 @@
-// components/Layout.tsx
-import React from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+import React from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+
+export const Layout: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Don't show header on login/signup pages
-  const isAuthPage = ['/login', '/signup'].includes(location.pathname);
+
+  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
 
   if (isAuthPage) {
     return <>{children}</>;
@@ -18,12 +20,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
   return (
     <div>
-      <header className="bg-white shadow">
+      <header className="bg-gray-100 shadow">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <h1 
-              className="text-xl font-bold cursor-pointer" 
-              onClick={() => navigate('/cars')}
+            <h1
+              className="text-xl font-bold cursor-pointer"
+              onClick={() => navigate("/cars")}
             >
               Car Management
             </h1>
@@ -38,9 +40,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           </div>
         </div>
       </header>
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-// hooks/useImageUpload.ts
+
 import { useState, useCallback } from 'react';
 
 interface UseImageUploadReturn {

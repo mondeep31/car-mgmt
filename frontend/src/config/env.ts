@@ -1,7 +1,3 @@
-// config/env.ts
-
-const env = {
-  API_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
-};
-
-export default env;
+export const env = {
+    BACKEND_URL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  };

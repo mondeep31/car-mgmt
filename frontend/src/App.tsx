@@ -1,16 +1,44 @@
-// App.tsx
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { Layout } from './components/Layout';
-import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
-import { CarListPage } from './pages/CarListPage';
-import { CarDetailPage } from './pages/CarDetailPage';
-import { CarFormPage } from './pages/CarFormPage';
-import { Toaster } from '@/components/ui/toaster';
+// import { BrowserRouter, Route, Routes } from "react-router-dom";
+// import Login from "./pages/Login";
+// import Signup from "./pages/Signup";
+// import CarListPage from "./pages/CarListPage";
+// import CarFormPage from "./pages/CarFormPage";
+// import CarDetailPage from "./pages/CarDetailPage";
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// function App() {
+//   return (
+//     <>
+//       <BrowserRouter>
+//         <Routes>
+//           <Route path="/login" element={<Login />} />
+//           <Route path="/signup" element={<Signup />} />
+//           <Route path="/cars" element={<CarListPage />} />
+//           <Route path="/cars/new" element={<CarFormPage />} />
+//           <Route path="/cars/:id" element={<CarDetailPage />} />
+//           <Route path="/cars/:id/edit" element={<CarFormPage />} />
+//         </Routes>
+//       </BrowserRouter>
+//     </>
+//   );
+// }
+
+// export default App;
+
+// App.tsx
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Layout } from "./components/Layout";
+import { Login } from "./pages/Login";
+import { Signup } from "./pages/Signup";
+import { CarListPage } from "./pages/CarListPage";
+import { CarDetailPage } from "./pages/CarDetailPage";
+import { CarFormPage } from "./pages/CarFormPage";
+import { Toaster } from "@/components/ui/toaster";
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -34,8 +62,8 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route
               path="/cars"
               element={
