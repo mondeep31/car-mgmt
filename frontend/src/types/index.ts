@@ -9,9 +9,12 @@ export interface LabelledInputType {
   
   export interface User {
     id: string;
-    name: string;
     email: string;
+    name?: string;
+    createdAt?: string;
+    updatedAt?: string;
   }
+  
   
   export interface Car {
     id: string;
@@ -25,8 +28,10 @@ export interface LabelledInputType {
   }
   
   export interface AuthResponse {
+    success?: boolean;
     token: string;
     user: User;
+    message?: string;
   }
   
   export interface LoginCredentials {
@@ -35,7 +40,7 @@ export interface LabelledInputType {
   }
   
   export interface SignupCredentials extends LoginCredentials {
-    name: string;
+    name?: string;
   }
   
   export interface CarFormProps {
@@ -50,3 +55,18 @@ export interface LabelledInputType {
     images: FileList;
   }
   
+  export interface LoginCredentials {
+    email: string;
+    password: string;
+  }
+  
+  export interface SignupCredentials {
+    email: string;
+    password: string;
+    name?: string;
+  }
+
+  export interface ErrorResponse {
+    message: string;
+    status?: number;
+  }
