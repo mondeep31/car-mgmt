@@ -1,21 +1,27 @@
 import { Request, Response } from 'express';
 import { PrismaClient, Prisma } from '@prisma/client';
 import path from 'path';
+import { uploadToGCS } from '../middleware/multer';
 const prisma = new PrismaClient();
 
 export const createCar = async (req: Request, res: Response) => {
   try {
     const { title, description, tags } = req.body;
-    const images = (req.files as Express.Multer.File[])?.map(file =>
-      path.relative(path.join(process.cwd(), 'uploads'), file.path)
-    ) || [];
-
+    
+    let images: string[] = [];
+    if (req.files) {
+      const files = req.files as Express.Multer.File[];
+      // Upload all files and get their URLs
+      images = await Promise.all(
+        files.map(file => uploadToGCS(file))
+      );
+    }
 
     const car = await prisma.car.create({
       data: {
         title,
         description,
-        tags,  
+        tags,
         images,
         userId: req.userId!
       }
@@ -23,14 +29,13 @@ export const createCar = async (req: Request, res: Response) => {
 
     res.status(201).json(car);
   } catch (error) {
-
-    res.status(400).json({ 
+    console.error('Error creating car:', error);
+    res.status(500).json({ 
       error: 'Could not create car',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
-
 export const getCars = async (req: Request, res: Response) => {
   try {
     const search = req.query.search as string | undefined;
@@ -97,10 +102,13 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
     try {
         
         const { title, description, tags } = req.body;
-        const images = (req.files as Express.Multer.File[])?.map(file =>
-          path.relative(path.join(process.cwd(), 'uploads'), file.path)
-        );
-        
+        let images: string[] = [];
+        if (req.files) {
+          const files = req.files as Express.Multer.File[];
+          images = await Promise.all(
+            files.map(file => uploadToGCS(file))
+          );
+        }
 
         const carId = req.params.id;
         if (!carId || typeof carId !== 'string') {
@@ -148,13 +156,13 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
         const updateData: Prisma.CarUpdateInput = {
             ...(title && { title }),
             ...(description && { description }),
-            tags: tagsArray,
-            ...(images && images.length > 0 && { images })
+            ...(tags && { tags }),
+            ...(images.length > 0 && { images })
         };
 
 
         const updatedCar = await prisma.car.update({
-            where: { id: carId },
+            where: { id: req.params.id},
             data: updateData
         });
 

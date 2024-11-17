@@ -3,7 +3,8 @@ import { AppError, ErrorCodes } from "@/types/error";
 import axios, { isAxiosError } from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://team-mgmt-backend.el.r.appspot.com',
+  // baseURL: 'http://localhost:8080',
   timeout: 10000, // 10 second timeout
 });
 
