@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -15,7 +14,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
 }) => {
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: (number | string)[] = [];
     const delta = 2; // Number of pages to show on each side of current page
 
     for (let i = 1; i <= totalPages; i++) {
@@ -45,18 +44,14 @@ export const Pagination: React.FC<PaginationProps> = ({
       </Button>
 
       {getPageNumbers().map((page, index) => (
-        <React.Fragment key={index}>
-          {page === '...' ? (
-            <span className="px-2">...</span>
-          ) : (
-            <Button
-              variant={currentPage === page ? 'default' : 'outline'}
-              onClick={() => onPageChange(page as number)}
-            >
-              {page}
-            </Button>
-          )}
-        </React.Fragment>
+        <Button
+          key={`${page}-${index}`}
+          variant={currentPage === page ? "default" : "outline"}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
+          disabled={typeof page === 'string'}
+        >
+          {page}
+        </Button>
       ))}
 
       <Button

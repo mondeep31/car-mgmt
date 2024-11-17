@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 
 interface UsePaginationProps {
@@ -15,7 +14,7 @@ interface UsePaginationReturn {
   goToPage: (page: number) => void;
   startIndex: number;
   endIndex: number;
-  pageNumbers: number[];
+  pageNumbers: (number | string)[];
 }
 
 export const usePagination = ({
@@ -44,12 +43,22 @@ export const usePagination = ({
   const endIndex = Math.min(startIndex + itemsPerPage - 1, totalItems - 1);
 
   const pageNumbers = useMemo(() => {
-    const pages = [];
+    const pages: (number | string)[] = [];
+    const delta = 2;
+
     for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - delta && i <= currentPage + delta)
+      ) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== '...') {
+        pages.push('...');
+      }
     }
     return pages;
-  }, [totalPages]);
+  }, [totalPages, currentPage]);
 
   return {
     currentPage,
