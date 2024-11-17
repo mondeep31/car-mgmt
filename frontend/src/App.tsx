@@ -1,30 +1,4 @@
-// import { BrowserRouter, Route, Routes } from "react-router-dom";
-// import Login from "./pages/Login";
-// import Signup from "./pages/Signup";
-// import CarListPage from "./pages/CarListPage";
-// import CarFormPage from "./pages/CarFormPage";
-// import CarDetailPage from "./pages/CarDetailPage";
 
-// function App() {
-//   return (
-//     <>
-//       <BrowserRouter>
-//         <Routes>
-//           <Route path="/login" element={<Login />} />
-//           <Route path="/signup" element={<Signup />} />
-//           <Route path="/cars" element={<CarListPage />} />
-//           <Route path="/cars/new" element={<CarFormPage />} />
-//           <Route path="/cars/:id" element={<CarDetailPage />} />
-//           <Route path="/cars/:id/edit" element={<CarFormPage />} />
-//         </Routes>
-//       </BrowserRouter>
-//     </>
-//   );
-// }
-
-// export default App;
-
-// App.tsx
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/authContext";
@@ -63,6 +37,8 @@ const App: React.FC = () => {
       <BrowserRouter>
         <Layout>
           <Routes>
+            
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route
