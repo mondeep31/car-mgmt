@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import carRoutes from './routes/carRoutes';
+import docsRoutes from './routes/docsRoutes';
 import { errorHandler } from './utils/errorHandler';
 
 dotenv.config();
@@ -27,7 +28,10 @@ app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
-// routes
+// Documentation route - no auth required
+app.use('/api/docs', docsRoutes);
+
+// Protected routes
 app.use('/auth', authRoutes);
 app.use('/cars', carRoutes);
 
