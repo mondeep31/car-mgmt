@@ -33,8 +33,8 @@ A full-stack web application for managing car inventory with authentication, ima
 ## 🚀 Live Demo
 
 - Frontend: [https://car-mgmt.vercel.app](https://car-mgmt.vercel.app)
-- Backend: [https://team-mgmt-backend.el.r.appspot.com](https://team-mgmt-backend.el.r.appspot.com)
-- API Documentation: [https://team-mgmt-backend.el.r.appspot.com/api/docs/](https://team-mgmt-backend.el.r.appspot.com/api/docs/)
+- Backend: Backend Hosted in Google Cloud Platform.
+- API Documentation: [https://team-mgmt-backend.el.r.appspot.com/api/docs/](API Docs)
 
 ## 💻 Getting Started
 
@@ -59,7 +59,6 @@ npm install
 3. Create a `.env` file in the frontend directory:
 ```env
 VITE_BACKEND_URL=http://localhost:8080  # For development
-# VITE_BACKEND_URL=https://team-mgmt-backend.el.r.appspot.com  # For production
 ```
 
 4. Start the development server:
