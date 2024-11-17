@@ -27,7 +27,7 @@
 // App.tsx
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/authContext";
 import { Layout } from "./components/Layout";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";

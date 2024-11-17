@@ -21,13 +21,10 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
   const navigate = useNavigate();
 
   const getImageUrl = (imagePath: string) => {
-
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-
-    const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-    return `${UPLOADS_URL}/${cleanPath}`;
+    return `${UPLOADS_URL}/${imagePath}`; 
   };
 
   return (
@@ -56,11 +53,11 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
       <CardContent>
         <div className="aspect-video relative overflow-hidden rounded-lg mb-4">
           <img
-            // src={car.images[0]}
             src={car.images[0] ? getImageUrl(car.images[0]) : '/placeholder-car.jpg'}
             alt={car.title}
             className="object-cover w-full h-full"
             onError={(e) => {
+              console.log(getImageUrl(car.images[0]));
               e.currentTarget.src = '/placeholder-car.jpg';
             }}
           />

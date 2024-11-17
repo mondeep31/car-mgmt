@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { PrismaClient, Prisma } from '@prisma/client';
-
+import path from 'path';
 const prisma = new PrismaClient();
 
 export const createCar = async (req: Request, res: Response) => {
   try {
     const { title, description, tags } = req.body;
-    const images = (req.files as Express.Multer.File[])?.map(file => file.path) || [];
+    const images = (req.files as Express.Multer.File[])?.map(file =>
+      path.relative(path.join(process.cwd(), 'uploads'), file.path)
+    ) || [];
 
 
     const car = await prisma.car.create({
@@ -91,7 +93,9 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
     try {
         
         const { title, description, tags } = req.body;
-        const images = (req.files as Express.Multer.File[])?.map(file => file.path);
+        const images = (req.files as Express.Multer.File[])?.map(file =>
+          path.relative(path.join(process.cwd(), 'uploads'), file.path)
+        );
         
 
         const carId = req.params.id;
