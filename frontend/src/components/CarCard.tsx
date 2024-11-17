@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Car } from "@/types";
 import { useNavigate } from "react-router-dom";
-import { UPLOADS_URL } from "@/config/constants";
+import { config } from "@/config/config";
 
 interface CarCardProps {
   car: Car;
@@ -25,7 +25,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete, disabled = fals
     if (imagePath.startsWith('http')) {
       return imagePath;
     }
-    return `${UPLOADS_URL}/${imagePath}`; 
+    return `${config.api.uploadsURL}/${imagePath}`; 
   };
 
   return (

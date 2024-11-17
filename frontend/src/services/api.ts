@@ -1,11 +1,14 @@
 import { LoginCredentials, SignupCredentials, AuthResponse, Car } from "@/types";
 import { AppError, ErrorCodes } from "@/types/error";
 import axios, { isAxiosError } from "axios";
+import config from '../config/config';
 
 const api = axios.create({
-  baseURL: 'https://team-mgmt-backend.el.r.appspot.com',
-  // baseURL: 'http://localhost:8080',
+  baseURL: config.api.baseURL,
   timeout: 10000, // 10 second timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 const handleApiError = (error: unknown): never => {
@@ -60,19 +63,24 @@ const handleApiError = (error: unknown): never => {
   );
 };
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (isAxiosError(error) && error.response?.status === 401) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('authToken');
     }
     return Promise.reject(error);
   }
@@ -82,15 +90,15 @@ export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     try {
       const response = await api.post<AuthResponse>('/auth/login', credentials);
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('authToken', response.data.token);
 
-      console.log('Server response:', response.data);
+
       
       if (response.data.message === 'Login Successful') {
         
         if (!response.data.token || !response.data.user) {
           return {
-            token: localStorage.getItem('token') || 'temporary-token',
+            token: localStorage.getItem('authToken') || 'temporary-token',
             user: {
               id: 'temp-id',
               email: credentials.email
@@ -109,7 +117,7 @@ export const authService = {
   signup: async (credentials: SignupCredentials): Promise<AuthResponse> => {
     try {
       const response = await api.post<AuthResponse>('/auth/signup', credentials);
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('authToken', response.data.token);
       if (!response.data || !response.data.token || !response.data.user) {
         throw new Error('Invalid signup response from server');
       }
@@ -121,7 +129,7 @@ export const authService = {
   },
 
   logout: () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   },
 };
