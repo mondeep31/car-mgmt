@@ -23,11 +23,6 @@ export const CarListPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadCars();
-  }, [loadCars]);
-
-
-  useEffect(() => {
     loadCars(debouncedSearchTerm);
   }, [debouncedSearchTerm, loadCars]);
 

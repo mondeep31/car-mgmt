@@ -58,12 +58,12 @@ export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     try {
       const response = await api.post<AuthResponse>('/auth/login', credentials);
-      
-      // Log the response for debugging
+      localStorage.setItem('token', response.data.token);
+      console.log("Token", response.data.token);
       console.log('Server response:', response.data);
       
       if (response.data.message === 'Login Successful') {
-        // If the server only returns a success message, create a basic user object
+        
         if (!response.data.token || !response.data.user) {
           return {
             token: localStorage.getItem('token') || 'temporary-token',
@@ -89,7 +89,7 @@ export const authService = {
   signup: async (credentials: SignupCredentials): Promise<AuthResponse> => {
     try {
       const response = await api.post<AuthResponse>('/auth/signup', credentials);
-      
+      localStorage.setItem('token', response.data.token);
       if (!response.data || !response.data.token || !response.data.user) {
         throw new Error('Invalid signup response from server');
       }
