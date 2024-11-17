@@ -13,7 +13,11 @@ export const createCar = async (req: Request, res: Response) => {
       const files = req.files as Express.Multer.File[];
       // Upload all files and get their URLs
       images = await Promise.all(
-        files.map(file => uploadToGCS(file))
+        files.map(async (file) => {
+          const url = await uploadToGCS(file);
+          // Ensure the URL is absolute
+          return url.startsWith('http') ? url : `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${url}`;
+        })
       );
     }
 
@@ -36,6 +40,7 @@ export const createCar = async (req: Request, res: Response) => {
     });
   }
 };
+
 export const getCars = async (req: Request, res: Response) => {
   try {
     const search = req.query.search as string | undefined;
@@ -71,8 +76,18 @@ export const getCars = async (req: Request, res: Response) => {
         createdAt: 'desc'
       }
     });
-    res.json(cars);
+
+    // Ensure all image URLs are absolute
+    const carsWithAbsoluteUrls = cars.map(car => ({
+      ...car,
+      images: car.images.map(image => 
+        image.startsWith('http') ? image : `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${image}`
+      )
+    }));
+
+    res.json(carsWithAbsoluteUrls);
   } catch (error) {
+    console.error('Error fetching cars:', error);
     res.status(400).json({ error: 'Could not fetch cars' });
   }
 };

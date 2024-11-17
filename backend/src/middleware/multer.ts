@@ -33,12 +33,14 @@ export const uploadToGCS = async (file: Express.Multer.File): Promise<string> =>
     
     // Upload to Google Cloud Storage
     const blob = bucket.file(fileName);
+    
+    // Set predefined ACL to 'publicRead' when creating the file
     const blobStream = blob.createWriteStream({
       resumable: false,
       metadata: {
         contentType: file.mimetype,
       },
-      public: true, // Make file public by default
+      predefinedAcl: 'publicRead' // This ensures the file remains publicly accessible
     });
 
     return new Promise((resolve, reject) => {
@@ -47,10 +49,18 @@ export const uploadToGCS = async (file: Express.Multer.File): Promise<string> =>
         reject(err);
       });
       
-      blobStream.on('finish', () => {
-        // Construct the public URL
-        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-        resolve(publicUrl);
+      blobStream.on('finish', async () => {
+        try {
+          // Make sure the file is public and get its public URL
+          await blob.makePublic();
+          
+          // Use a direct storage URL that doesn't require authentication
+          const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+          resolve(publicUrl);
+        } catch (err) {
+          console.error('Error making blob public:', err);
+          reject(err);
+        }
       });
 
       blobStream.end(file.buffer);
