@@ -23,7 +23,7 @@ export const createCar = async (req: Request, res: Response) => {
 
     res.status(201).json(car);
   } catch (error) {
-    console.error('Error creating car:', error);
+
     res.status(400).json({ 
       error: 'Could not create car',
       details: error instanceof Error ? error.message : 'Unknown error'
@@ -37,33 +37,37 @@ export const getCars = async (req: Request, res: Response) => {
     
     const where: Prisma.CarWhereInput = {
       userId: req.userId!,
-      ...(search && {
+      ...(search?.trim() && {
         OR: [
           {
             title: {
-              contains: search,
+              contains: search.trim(),
               mode: 'insensitive' as Prisma.QueryMode
             }
           },
           {
             description: {
-              contains: search,
+              contains: search.trim(),
               mode: 'insensitive' as Prisma.QueryMode
             }
           },
           {
             tags: {
-              hasSome: [search]
+              hasSome: [search.trim()]
             }
           }
         ]
       })
     };
 
-    const cars = await prisma.car.findMany({ where });
+    const cars = await prisma.car.findMany({ 
+      where,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
     res.json(cars);
   } catch (error) {
-    console.error(error);
     res.status(400).json({ error: 'Could not fetch cars' });
   }
 };
@@ -84,7 +88,7 @@ export const getCar = async (req: Request, res: Response) => {
 
     res.json(car);
   } catch (error) {
-    console.error(error);
+
     res.status(400).json({ error: 'Could not fetch car' });
   }
 };
@@ -121,7 +125,7 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
                     }
                 }
             } catch (error) {
-                console.error('Error parsing tags:', error);
+
                 res.status(400).json({ error: 'Invalid tags format' });
                 return;
             }
@@ -157,7 +161,7 @@ export const updateCar = async (req: Request, res: Response): Promise<void> => {
         res.json(updatedCar);
         return;
     } catch (error) {
-        console.error('Update error:', error);
+
         res.status(400).json({ 
             error: 'Could not update car',
             details: error instanceof Error ? error.message : 'Unknown error'
@@ -187,7 +191,7 @@ export const deleteCar = async (req: Request, res: Response) => {
         message: "Car deleted successfully"
     });
   } catch (error) {
-    console.error(error);
+
     res.status(400).json({ error: 'Could not delete car' });
   }
 };

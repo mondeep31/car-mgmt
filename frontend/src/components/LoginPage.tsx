@@ -34,9 +34,9 @@ export const LoginPage: React.FC = () => {
     try {
       clearErrors();
       await login(data);
-      // Navigation will be handled by the useEffect above
+
     } catch (error) {
-      console.error("Login failed:", error);
+
       setError("root", {
         type: "manual",
         message: error instanceof Error ? error.message : "Login failed. Please try again.",

@@ -61,13 +61,10 @@ const parseTagsString = (tagsInput: unknown): string[] => {
     try {
       const schema = req.method === 'PUT' ? carUpdateSchema : carSchema;
       const validatedData = schema.parse(req.body);
-      
-
       req.body = validatedData;
       
       next();
     } catch (error) {
-      console.error('Validation error:', error);
       res.status(400).json({ 
         error: 'Invalid input',
         details: error instanceof z.ZodError ? error.errors : String(error)

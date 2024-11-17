@@ -20,12 +20,12 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
         postInputs
       );
       const jwt = response.data;
-      console.log(jwt);
+
       localStorage.setItem("token", jwt);
       alert("Signed up");
       navigate("/cars");
     } catch (e) {
-      console.error(e);
+
       alert("Error while signing up");
     }
   }

@@ -30,8 +30,7 @@ export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log(user)
-    console.log(password)
+
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new Error();
     }

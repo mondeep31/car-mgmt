@@ -15,9 +15,10 @@ import { UPLOADS_URL } from "@/config/constants";
 interface CarCardProps {
   car: Car;
   onDelete: (id: string) => void;
+  disabled?: boolean;
 }
 
-export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
+export const CarCard: React.FC<CarCardProps> = ({ car, onDelete, disabled = false }) => {
   const navigate = useNavigate();
 
   const getImageUrl = (imagePath: string) => {
@@ -37,6 +38,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
               variant="ghost"
               size="sm"
               onClick={() => navigate(`/cars/${car.id}/edit`)}
+              disabled={disabled}
             >
               Edit
             </Button>
@@ -44,6 +46,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
               variant="destructive"
               size="sm"
               onClick={() => onDelete(car.id)}
+              disabled={disabled}
             >
               Delete
             </Button>
@@ -57,7 +60,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car, onDelete }) => {
             alt={car.title}
             className="object-cover w-full h-full"
             onError={(e) => {
-              console.log(getImageUrl(car.images[0]));
+
               e.currentTarget.src = '/placeholder-car.jpg';
             }}
           />

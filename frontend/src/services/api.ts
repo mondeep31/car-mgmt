@@ -1,50 +1,63 @@
-// import { LoginCredentials, SignupCredentials, Car, AuthResponse } from "@/types";
-// import axios from "axios";
-
-
-// const api = axios.create({
-//     baseURL: 'http://localhost:3000'
-// })
-
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem('token');
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
-// export const authService = {
-//   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-//     try {
-//       const response = await api.post<AuthResponse>('/auth/login', credentials);
-//       if (!response.data.token || !response.data.user) {
-//         throw new Error('Invalid response from server');
-//       }
-//       return response.data;
-//     } catch (error) {
-//       console.error('Login request failed:', error);
-//       throw error;
-//     }
-//   },
-//   signup: async (credentials: SignupCredentials) => {
-//     const response = await api.post<AuthResponse>('/auth/signup', credentials);
-//     localStorage.setItem('token', response.data.token);
-//     return response.data;
-//   },
-//   logout: () => {
-//     localStorage.removeItem('token');
-//   },
-// };
-
-// api.ts
-// services/api.ts
-import { LoginCredentials, SignupCredentials, AuthResponse, ErrorResponse, Car } from "@/types";
-import axios, { AxiosError } from "axios";
+import { LoginCredentials, SignupCredentials, AuthResponse, Car } from "@/types";
+import { AppError, ErrorCodes } from "@/types/error";
+import axios, { isAxiosError } from "axios";
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000'
+  baseURL: 'http://localhost:3000',
+  timeout: 10000, // 10 second timeout
 });
+
+const handleApiError = (error: unknown): never => {
+  if (isAxiosError(error)) {
+    const status = error.response?.status;
+    const data = error.response?.data;
+    
+    switch (status) {
+      case 401:
+        throw new AppError(
+          data?.message || 'Your session has expired. Please log in again.',
+          ErrorCodes.UNAUTHORIZED,
+          status
+        );
+      case 404:
+        throw new AppError(
+          data?.message || 'Resource not found',
+          ErrorCodes.NOT_FOUND,
+          status
+        );
+      case 422:
+        throw new AppError(
+          data?.message || 'Validation error',
+          ErrorCodes.VALIDATION_ERROR,
+          status,
+          data?.errors
+        );
+      case 500:
+        throw new AppError(
+          'Internal server error',
+          ErrorCodes.SERVER_ERROR,
+          status
+        );
+      default:
+        if (!error.response) {
+          throw new AppError(
+            'Network error. Please check your connection.',
+            ErrorCodes.NETWORK_ERROR
+          );
+        }
+        throw new AppError(
+          data?.message || 'An unexpected error occurred',
+          ErrorCodes.UNKNOWN_ERROR,
+          status
+        );
+    }
+  }
+  
+  throw new AppError(
+    error instanceof Error ? error.message : 'An unexpected error occurred',
+    ErrorCodes.UNKNOWN_ERROR
+  );
+};
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
@@ -54,12 +67,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (isAxiosError(error) && error.response?.status === 401) {
+      localStorage.removeItem('token');
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     try {
       const response = await api.post<AuthResponse>('/auth/login', credentials);
       localStorage.setItem('token', response.data.token);
-      console.log("Token", response.data.token);
+
       console.log('Server response:', response.data);
       
       if (response.data.message === 'Login Successful') {
@@ -78,11 +101,7 @@ export const authService = {
       
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data) {
-        throw new Error(axiosError.response.data.message);
-      }
-      throw new Error('Login failed. Please try again.');
+      throw handleApiError(error);
     }
   },
 
@@ -96,11 +115,7 @@ export const authService = {
       
       return response.data;
     } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
-      if (axiosError.response?.data) {
-        throw new Error(axiosError.response.data.message);
-      }
-      throw new Error('Signup failed. Please try again.');
+      throw handleApiError(error);
     }
   },
 
@@ -112,19 +127,55 @@ export const authService = {
 
 export const carService = {
   getAllCars: async (search?: string) => {
-    const params = search ? { search } : undefined;
-    return api.get<Car[]>('/cars', { params }).then((res) => res.data);
+    try {
+      const params = search ? { search } : undefined;
+      const response = await api.get<Car[]>('/cars', { params });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
+  
   getCarById: async (id: string) => {
-    return api.get<Car>(`/cars/${id}`).then((res) => res.data);
+    try {
+      const response = await api.get<Car>(`/cars/${id}`);
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
+  
   createCar: async (formData: FormData) => {
-    return api.post<Car>('/cars', formData).then((res) => res.data);
+    try {
+      const response = await api.post<Car>('/cars', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
+  
   updateCar: async (id: string, formData: FormData) => {
-    return api.put<Car>(`/cars/${id}`, formData).then((res) => res.data);
+    try {
+      const response = await api.put<Car>(`/cars/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
+  
   deleteCar: async (id: string) => {
-    return api.delete(`/cars/${id}`);
+    try {
+      await api.delete(`/cars/${id}`);
+    } catch (error) {
+      throw handleApiError(error);
+    }
   },
-}
+};
